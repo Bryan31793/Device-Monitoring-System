@@ -26,6 +26,16 @@ void mem_monitor() {
         exit(1);
     }
 
+    if(fork() == 0) {
+        close(fd[0]);
+        dup2(fd[1], STDOUT_FILENO);
+        close(fd[1]);
+
+        execlp("cat", "cat", "/proc/stat", NULL);
+        perror("Process error");
+        exit(1);
+    }
+
     close(fd[1]);   //parent process closes write channel
 
 
@@ -38,6 +48,6 @@ void mem_monitor() {
     
     close(fd[0]);
     wait(NULL);
-
+    wait(NULL);
 
 }
